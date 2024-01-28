@@ -425,7 +425,7 @@ void loop()
             getWeather();
         }
 
-        if(saveDatFlag && TempValue != nullptr && minute() % 10 == 0 && second() == 0 ){
+        if(saveDatFlag && TempValue != nullptr && minute() % 3 == 0 && second() == 0 ){
             saveWeatherData(); 
         }
                            
