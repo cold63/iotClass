@@ -3,8 +3,8 @@
 
 void setup() {
   // put your setup code here, to run once:
-  DynamicJsonDocument  doc(1024);
-  //StaticJsonDocument<400> doc;
+  JsonDocument  doc;
+
   String OutString;
 
   Serial.begin(115200);
@@ -13,12 +13,12 @@ void setup() {
   doc["age"] = 25;
   doc["isStudent"] = true;
 
-  JsonArray hobbies = doc.createNestedArray("hobbies");
+  JsonArray hobbies = doc.add<JsonArray>();
   hobbies.add("reading");
   hobbies.add("painting");
   hobbies.add("hiking");
 
-  JsonObject address = doc.createNestedObject("address");
+  JsonObject address = doc.add<JsonObject>();
   address["street"] = "456 Elm St";
   address["city"] = "Los Angeles";
   address["country"] = "USA";
