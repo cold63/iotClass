@@ -3,8 +3,7 @@
 void setup() {
   // put your setup code here, to run once:
    Serial.begin(115200);
-  DynamicJsonDocument  doc(1024);
-  //StaticJsonDocument<384> doc;
+  DynamicJsonDocument  doc;
 
   char input[] = "{\"name\":\"Alice\",\"age\":25,\"isStudent\":1,\"hobbies\":[\"reading\",\"painting\",\"hiking\"],\"address\":{\"street\":\"456 Elm St\",\"city\":\"Los Angeles\",\"country\":\"USA\"},\"favoriteFoods\":null}";
   DeserializationError error = deserializeJson(doc, input);
