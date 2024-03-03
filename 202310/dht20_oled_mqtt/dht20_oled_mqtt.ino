@@ -50,7 +50,7 @@ int fontWitdh;
 
 void mqtt_callback(char* topic, byte* payload, unsigned int msgLength) {
   char temp[80];
-  DynamicJsonDocument mqttTemp(100);
+  JsonDocument mqttTemp;
   sprintf(temp, "Message arrived with Topic [%s]\n  Data Length: [%d], Payload: [", topic, msgLength);
   Serial.print(temp);
   Serial.write(payload, msgLength);
@@ -104,7 +104,7 @@ void reconnect()
 
 void sendMQTT()
 {
-  DynamicJsonDocument doc(400);
+  JsonDocument doc;
   
 
   doc["Temp"] = TempVale;
