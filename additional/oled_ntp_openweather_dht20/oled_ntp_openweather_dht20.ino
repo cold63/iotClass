@@ -21,11 +21,11 @@ byte packetbuffer[NTP_PACKET_SIZE];
 /////Time End
 
 //************************ open weather map **************************
-String apikey ="your_openweathermap_api_key";
+String apikey ="cdcb515cb3ea544e3d133b20ee47e890";
 String location ="New Taipei City,TW";
 char openWeatherServer[] = "api.openweathermap.org";
 
-
+JsonDocument doc;
 String minTemp,maxTemp,TempValue,humidityStr,weatherStr;
 int weatherType;
 
@@ -104,7 +104,7 @@ void showTime()
 
 void getWeather()
 {
-  DynamicJsonDocument doc(3000);
+    
     Serial.println("\n Starting connection to server...");
 
     if(client.connect(openWeatherServer,80))
@@ -119,7 +119,7 @@ void getWeather()
         client.println("HOST: api.openweathermap.org");
         client.println("Connection: close");
         client.println();
-        //
+        client.flush();
     }
 
     delay(500);
@@ -133,40 +133,46 @@ void getWeather()
             Serial.println(F("deserializeJson() failed!"));
             Serial.println(error.c_str());
         }
-    }
 
+      
+
+      String ss1 = doc["main"]["temp"];
+      String ss2 = doc["main"]["temp_min"];
+      String ss3 = doc["main"]["temp_max"];
+      String ss4 = doc["main"]["humidity"];
+      String ss5 = doc["weather"][0]["main"];
+      if (ss1 != NULL){
+          TempValue = ss1;
+          minTemp = ss2;
+          maxTemp = ss3;
+          humidityStr = ss4;
+          weatherStr = ss5;
+
+      }
+
+      doc.clear();
+      if(weatherStr == "Clear"){
+          weatherType = 0;
+      }
+
+      if(weatherStr == "Clouds"){
+          weatherType = 2;
+      }
+
+      if(weatherStr == "Rain"){
+          weatherType = 3;
+      }
+
+      if(weatherStr == "Drizzle"){
+          weatherType = 3;
+      }
+
+      if(weatherStr == "Thunderstorm"){
+          weatherType = 4;
+      }           
+    }
     client.stop();
-
-    String ss1 = doc["main"]["temp"];
-    String ss2 = doc["main"]["temp_min"];
-    String ss3 = doc["main"]["temp_max"];
-    String ss4 = doc["main"]["humidity"];
-    String ss5 = doc["weather"][0]["main"];
-    TempValue = ss1;
-    minTemp = ss2;
-    maxTemp = ss3;
-    humidityStr = ss4;
-    weatherStr = ss5;
-    
-    if(weatherStr == "Clear"){
-        weatherType = 0;
-    }
-
-    if(weatherStr == "Clouds"){
-        weatherType = 2;
-    }
-
-    if(weatherStr == "Rain"){
-        weatherType = 3;
-    }
-
-    if(weatherStr == "Drizzle"){
-        weatherType = 3;
-    }
-
-    if(weatherStr == "Thunderstorm"){
-        weatherType = 4;
-    }                
+             
 }
 
 void drawWeatherSymbol(u8g2_uint_t x, u8g2_uint_t y, uint8_t Type)
@@ -287,6 +293,8 @@ void loop()
     u8g2.print("溫度:");
     u8g2.setCursor(0,fontHigh * 2);
     u8g2.print("濕度:");   
+    u8g2.setCursor(0,fontHigh * 3);
+    u8g2.print("預報:");     
 
     TempVale = dht20.getTemperature();  //讀取溫度
     Serial.print("Temp: ");    //將結果印出來
@@ -302,8 +310,15 @@ void loop()
     u8g2.setCursor(fontWitdh * 2 + 8,fontHigh * 2);
     u8g2.print(HumidityValue);
 
+   
+
     if(TempValue != nullptr)
-        drawWeatherSymbol(88,15,weatherType);
+    {
+      u8g2.setCursor(fontWitdh * 2 + 8,fontHigh * 3);
+      u8g2.print(TempValue); 
+      drawWeatherSymbol(88,15,weatherType);
+    }
+        
     
     showTime();
     
@@ -312,7 +327,7 @@ void loop()
 
 
     if (status == WL_CONNECTED){
-        if(minute() % 2 == 0 && second() == 0){   
+        if(minute() % 5 == 0 && second() == 0){   
             getWeather();
         }
 
